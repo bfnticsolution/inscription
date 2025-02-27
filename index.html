@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>NafaTransfert</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1436a5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .form_main {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            padding: 40px;
+            box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            margin: auto;
+            border-radius: 20px;
+        }
+
+        .form_main::before {
+            position: absolute;
+            content: "";
+            width: 200px;
+            height: 200px;
+            background-color: #aa710e;
+            transform: rotate(45deg);
+            left: -180px;
+            bottom: 30px;
+            z-index: 2;
+            border-radius: 30px;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.082);
+        }
+
+        .heading {
+            font-size: 2em;
+            color: #2fc411;
+            font-weight: 700;
+            margin: 5px 0 20px 0;
+            z-index: 2;
+        }
+
+        .inputContainer {
+            width: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .inputIcon {
+            position: absolute;
+            left: 10px;
+            color: #278a1e;
+            z-index: 3;
+        }
+
+        .inputField {
+            width: 100%;
+            height: 40px;
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px solid #6b7280;
+            margin: 15px 0;
+            color: #1e308a;
+            font-size: 1em;
+            font-weight: 500;
+            box-sizing: border-box;
+            padding-left: 35px;
+            border-radius: 10px;
+        }
+
+        .inputField:focus {
+            outline: none;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        .inputField::placeholder {
+            color: #1144aa;
+            font-size: 1em;
+            font-weight: 500;
+        }
+
+        #button {
+            z-index: 2;
+            position: relative;
+            width: 50%;
+            border: none;
+            background-color: #1e8a20;
+            height: 40px;
+            color: white;
+            font-size: 1em;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-radius: 10px;
+        }
+
+        #button:hover {
+            background-color: #2563eb;
+        }
+
+        .forgotLink {
+            z-index: 2;
+            font-size: 0.9em;
+            font-weight: 500;
+            color: #1e3a8a;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+
+        .brand-logo {
+            width: 80px;
+            margin-bottom: 20px;
+            border-radius: 20px;
+            z-index: 2;
+        }
+
+        .logo-outside {
+            position: absolute;
+            top: -10px;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: auto;
+            border-radius: 10px;
+            z-index: 1000;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .balance {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .balance h3 {
+            margin: 0;
+            color: #333;
+        }
+
+        .balance p {
+            font-size: 1.5em;
+            color: #28a745;
+            margin: 0;
+        }
+
+        .fees {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .modal-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .modal-icon.success {
+            color: #28a745;
+        }
+
+        .modal-icon.error {
+            color: #dc3545;
+        }
+
+        .modal-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .modal-button:hover {
+            background-color: #218838;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .history-table th, .history-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .history-table th {
+            background-color: #f2f2f2;
+        }
+
+        .user-info {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-info p {
+            margin: 0;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .user-info strong {
+            color: #28a745;
+        }
+        /* Style pour la section d'opérations */
+#operationForm {
+    background-color: #7bd2596d; /* Couleur de fond douce */
+    padding: 20px; /* Espacement interne */
+    border-radius: 10px; /* Coins arrondis */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Ombre légère */
+}
+
+/* Style pour les labels dans le formulaire d'opérations */
+#operationForm label {
+    font-weight: bold; /* Texte en gras */
+    margin-top: 10px; /* Espacement supérieur */
+}
+
+/* Style pour le bouton de validation dans le formulaire d'opération */
+#operationForm #button {
+    background-color: #1e8a20; /* Couleur de fond pour le bouton */
+    border-radius: 10px; /* Coins arrondis */
+}
+
+#operationForm #button:hover {
+    background-color: #2563eb; /* Couleur au survol */
+}
+
+/* Style pour les sélecteurs */
+#operationForm select {
+    width: 100%; /* Largeur complète */
+    padding: 10px; /* Espacement interne */
+    border-radius: 5px; /* Coins arrondis */
+    border: 1px solid #ccc; /* Bordure douce */
+}
+
+/* Style pour les champs d'entrée */
+#operationForm input {
+    border-radius: 5px; /* Coins arrondis */
+    border: 1px solid #ccc; /* Bordure douce */
+}
+    </style>
+</head>
+<body>
+
+<!-- Section Connexion -->
+<div id="login-section" class="form_main">
+    <p class="heading">Connexion</p>
+
+    <!-- Champ numéro de téléphone -->
+    <div class="inputContainer mb-3">
+        <i class="fas fa-phone inputIcon"></i>
+        <input type="tel" class="inputField form-control" id="login-phone" placeholder="Numéro de téléphone" required>
+    </div>
+
+    <!-- Champ mot de passe -->
+    <div class="inputContainer mb-3">
+        <i class="fas fa-lock inputIcon"></i>
+        <input type="password" class="inputField form-control" id="login-password" placeholder="Mot de passe" required>
+    </div>
+
+    <!-- Bouton de connexion -->
+    <button type="button" class="btn btn-primary w-100" id="button" onclick="loginUser()">Se connecter</button>
+
+    <!-- Liens supplémentaires -->
+    <p class="mt-3">
+        <a href="#" class="forgotLink" onclick="showSignupForm()">S'inscrire</a>
+        <a href="#" class="forgotLink" onclick="showForgotPasswordForm()">Mot de passe oublié ?</a>
+    </p>
+</div>
+
+<!-- Section Inscription -->
+<div id="signup-section" class="form_main hidden">
+    <p class="heading">Inscription</p>
+
+    <!-- Champ nom -->
+    <div class="inputContainer mb-3">
+        <i class="fas fa-user inputIcon"></i>
+        <input type="text" class="inputField form-control" id="signup-firstName" placeholder="Nom" required>
+    </div>
+
+    <!-- Champ prénom -->
+    <div class="inputContainer mb-3">
+        <i class="fas fa-user inputIcon"></i>
+        <input type="text" class="inputField form-control" id="signup-lastName" placeholder="Prénom" required>
+    </div>
+
+    <!-- Champ numéro de téléphone -->
+    <div class="inputContainer mb-3">
+        <i class="fas fa-phone inputIcon"></i>
+        <input type="tel" class="inputField form-control" id="signup-phone" placeholder="Numéro de téléphone" required>
+    </div>
+
+    <!-- Champ pays -->
+    <div class="inputContainer mb-3">
+        <i class="fas fa-globe inputIcon"></i>
+        <input type="text" class="inputField form-control" id="signup-country" placeholder="Pays" required>
+    </div>
+
+    <!-- Champ code secret -->
+    <div class="inputContainer mb-3">
+        <i class="fas fa-lock inputIcon"></i>
+        <input type="password" class="inputField form-control" id="signup-secretCode" placeholder="Code secret" required>
+    </div>
+
+    <!-- Bouton d'inscription -->
+    <button type="button" class="btn btn-primary w-100" id="button" onclick="signupUser()">S'inscrire</button>
+
+    <!-- Lien retour -->
+    <p class="mt-3">
+        <a href="#" class="forgotLink" onclick="showLoginForm()">Retour à la connexion</a>
+    </p>
+</div>
+
+<!-- Section Gestion de Compte -->
+<div id="account-section" class="form_main hidden">
+    <p class="heading">Gestion de Compte</p>
+
+    <!-- Informations de l'utilisateur -->
+    <div class="user-info">
+        <p><strong>Nom :</strong> <span id="account-name"></span></p>
+        <p><strong>Téléphone :</strong> <span id="account-phone"></span></p>
+    </div>
+
+    <!-- Section Solde -->
+    <div class="balance">
+        <h3>Solde Actuel</h3>
+        <p id="balanceAmount">0 XOF</p>
+    </div>
+ <!-- Bouton S'identifier -->
+ <button type="button" class="btn btn-primary w-100" id="button" onclick="showIdentificationForm()">S'identifier</button>
+    <!-- Bouton pour afficher l'historique -->
+    <button type="button" class="btn btn-primary w-100" id="button" onclick="showHistoryModal()">Historique des opérations</button>
+
+    <!-- Formulaire pour les opérations -->
+    <form id="operationForm">
+        <label for="operationType">Type d'opération:</label>
+        <div class="form-group">
+            <label for="operationType">Type d'opération:</label>
+            <select id="operationType" name="operationType" required>
+                <option value="depot">Dépôt</option>
+                <option value="transfert-national">Transfert National</option>
+                <option value="transfert-international">Transfert International</option>
+                <option value="retrait">Retrait</option>
+                <option value="internet">Achat de Forfait Internet</option>
+                <option value="credit">Achat de Crédit d'Appel</option>
+            </select>
+        </div>
+
+        <!-- Champs dynamiques -->
+        <div id="dynamicFields"></div>
+
+        <!-- Affichage des frais de transfert -->
+        <div id="feesInfo" class="fees hidden"></div>
+
+        <!-- Bouton de validation -->
+        <button type="submit" id="button">Valider</button>
+    </form>
+
+   
+
+    <!-- Bouton de déconnexion -->
+    <button type="button" class="btn btn-secondary w-100" id="button" onclick="logoutUser()">Déconnexion</button>
+</div>
+<!-- Section Identification -->
+<div id="identification-section" class="form_main hidden">
+    <p class="heading">Identification</p>
+
+    <!-- Champ recto de la pièce d'identité -->
+    <div class="inputContainer mb-3">
+        <i class="fas fa-id-card inputIcon"></i>
+        <input type="file" class="inputField form-control" id="id-front" accept="image/*" required>
+    </div>
+
+    <!-- Champ verso de la pièce d'identité -->
+    <div class="inputContainer mb-3">
+        <i class="fas fa-id-card inputIcon"></i>
+        <input type="file" class="inputField form-control" id="id-back" accept="image/*" required>
+    </div>
+
+    <!-- Champ nom -->
+    <div class="inputContainer mb-3">
+        <i class="fas fa-user inputIcon"></i>
+        <input type="text" class="inputField form-control" id="identification-firstName" placeholder="Nom" required>
+    </div>
+
+    <!-- Champ prénom -->
+    <div class="inputContainer mb-3">
+        <i class="fas fa-user inputIcon"></i>
+        <input type="text" class="inputField form-control" id="identification-lastName" placeholder="Prénom" required>
+    </div>
+
+    <!-- Champ numéro de téléphone -->
+    <div class="inputContainer mb-3">
+        <i class="fas fa-phone inputIcon"></i>
+        <input type="tel" class="inputField form-control" id="identification-phone" placeholder="Numéro de téléphone" required>
+    </div>
+
+    <!-- Champ code secret -->
+    <div class="inputContainer mb-3">
+        <i class="fas fa-lock inputIcon"></i>
+        <input type="password" class="inputField form-control" id="identification-secretCode" placeholder="Code secret" required>
+    </div>
+
+    <!-- Bouton de soumission -->
+    <button type="button" class="btn btn-primary w-100" id="button" onclick="submitIdentification()">Soumettre</button>
+
+    <!-- Lien retour -->
+    <p class="mt-3">
+        <a href="#" class="forgotLink" onclick="showAccountSection()">Retour à la gestion de compte</a>
+    </p>
+</div>
+
+<!-- Modal pour afficher les messages -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div id="modal-icon" class="modal-icon"></div>
+        <p id="modal-message"></p>
+        <button class="modal-button" onclick="closeModal()">Fermer</button>
+    </div>
+</div>
+
+<!-- Modal pour la validation par code PIN -->
+<div id="pinModal" class="modal">
+    <div class="modal-content">
+        <h3>Validation par code PIN</h3>
+        <input type="password" id="pinInput" placeholder="Entrez votre code PIN" required>
+        <button class="modal-button" onclick="validatePin()">Valider</button>
+        <button class="modal-button" onclick="closePinModal()">Annuler</button>
+    </div>
+</div>
+
+<!-- Modal pour l'historique des opérations -->
+<div id="historyModal" class="modal">
+    <div class="modal-content">
+        <h3>Historique des opérations</h3>
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Montant (XOF)</th>
+                    <th>Bénéficiaire</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody">
+                <!-- Les lignes de l'historique seront ajoutées ici dynamiquement -->
+            </tbody>
+        </table>
+        <button class="modal-button" onclick="closeHistoryModal()">Fermer</button>
+    </div>
+</div>
+
+<!-- Modal pour le mot de passe oublié -->
+<div id="forgotPasswordModal" class="modal">
+    <div class="modal-content">
+        <h3>Mot de passe oublié</h3>
+        <input type="tel" id="forgotPhone" placeholder="Numéro de téléphone" required>
+        <button class="modal-button" onclick="resetPassword()">Réinitialiser</button>
+        <button class="modal-button" onclick="closeForgotPasswordModal()">Annuler</button>
+    </div>
+</div>
+
+<script>
+    let currentUser = null;
+    let pendingOperation = null; // Stocke l'opération en attente de validation par PIN
+    let operationsHistory = []; // Historique des opérations
+
+    // URL de l'API Google Apps Script
+    const apiUrl = 'https://script.google.com/macros/s/AKfycbxtMhHgFaF-qp6Idpff3WrxGPhFPNjLm70ZixCRn3Dirt5xdqO9CfUTtfHQCB1oFMXtfA/exec';
+
+    // Fonction pour afficher une modal
+    function showModal(iconClass, message) {
+        const modal = document.getElementById('modal');
+        const modalIcon = document.getElementById('modal-icon');
+        const modalMessage = document.getElementById('modal-message');
+
+        modalIcon.className = `modal-icon ${iconClass}`;
+        modalIcon.innerHTML = `<i class="${iconClass === 'success' ? 'fas fa-check-circle' : 'fas fa-times-circle'}"></i>`;
+        modalMessage.textContent = message;
+        modal.style.display = 'flex';
+    }
+
+    // Fonction pour fermer la modal
+    function closeModal() {
+        const modal = document.getElementById('modal');
+        modal.style.display = 'none';
+    }
+
+    // Fonction pour afficher la modal de code PIN
+    function showPinModal() {
+        const pinModal = document.getElementById('pinModal');
+        pinModal.style.display = 'flex';
+    }
+
+    // Fonction pour fermer la modal de code PIN
+    function closePinModal() {
+        const pinModal = document.getElementById('pinModal');
+        pinModal.style.display = 'none';
+    }
+
+    // Fonction pour afficher la modal d'historique
+    function showHistoryModal() {
+        const historyModal = document.getElementById('historyModal');
+        const historyTableBody = document.getElementById('historyTableBody');
+
+        // Vider le tableau avant de le remplir
+        historyTableBody.innerHTML = '';
+
+        // Ajouter chaque opération dans le tableau
+        operationsHistory.forEach(op => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${op.date}</td>
+                <td>${op.type}</td>
+                <td>${op.amount}</td>
+                <td>${op.recipient || 'N/A'}</td>
+            `;
+            historyTableBody.appendChild(row);
+        });
+
+        // Afficher la modal
+        historyModal.style.display = 'flex';
+    }
+
+    // Fonction pour fermer la modal d'historique
+    function closeHistoryModal() {
+        const historyModal = document.getElementById('historyModal');
+        historyModal.style.display = 'none';
+    }
+
+    // Fonction pour afficher la modal de mot de passe oublié
+    function showForgotPasswordModal() {
+        const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+        forgotPasswordModal.style.display = 'flex';
+    }
+
+    // Fonction pour fermer la modal de mot de passe oublié
+    function closeForgotPasswordModal() {
+        const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+        forgotPasswordModal.style.display = 'none';
+    }
+
+    // Fonction pour réinitialiser le mot de passe
+    function resetPassword() {
+        const phone = document.getElementById('forgotPhone').value;
+
+        if (phone) {
+            // Simuler l'envoi d'un SMS ou e-mail de réinitialisation
+            showModal('success', 'Un lien de réinitialisation a été envoyé à votre numéro.');
+            closeForgotPasswordModal();
+        } else {
+            showModal('error', 'Veuillez entrer votre numéro de téléphone.');
+        }
+    }
+
+    // Fonction pour valider le code PIN
+    function validatePin() {
+        const pinInput = document.getElementById('pinInput').value;
+
+        if (pinInput === "1234") { // Code PIN simulé
+            closePinModal();
+            processPendingOperation(); // Traiter l'opération en attente
+        } else {
+            showModal('error', 'Code PIN incorrect.');
+        }
+    }
+
+    // Fonction pour traiter l'opération en attente
+    function processPendingOperation() {
+        console.log("Début de processPendingOperation");
+        const { operationType, amount, recipientPhone, country, service } = pendingOperation;
+
+        fetch(apiUrl, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'operation',
+                phone: currentUser.phone,
+                operationType: operationType,
+                amount: amount,
+                recipientPhone: recipientPhone,
+                country: country,
+                service: service
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            console.log("Réponse reçue du serveur :", response);
+            return response.json();
+        })
+        .then(data => {
+            console.log("Données reçues du serveur :", data);
+            if (data.status === 'success') {
+                currentUser.balance = data.user.balance;
+                updateBalance();
+                showModal('success', 'Opération réussie !');
+                fetchHistory(); // Mettre à jour l'historique
+            } else {
+                showModal('error', data.message || 'Erreur lors de l\'opération.');
+            }
+        })
+        .catch(error => {
+            console.error("Erreur lors de l'opération :", error);
+            showModal('error', 'Erreur de connexion. Vérifiez votre réseau.');
+        });
+    }
+
+    // Fonction pour envoyer une notification
+    function sendNotification(operationType, amount, recipientPhone) {
+        const message = `Opération réussie : ${operationType} de ${amount} XOF vers ${recipientPhone || 'N/A'}`;
+        console.log(`Notification envoyée : ${message}`);
+    }
+
+    // Fonction de connexion
+    function loginUser() {
+        const phone = document.getElementById('login-phone').value;
+        const password = document.getElementById('login-password').value;
+
+        if (phone && password) {
+            fetch(apiUrl + `?action=login&phone=${phone}&password=${password}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        currentUser = data.user;
+                        document.getElementById('login-section').classList.add('hidden');
+                        document.getElementById('account-section').classList.remove('hidden');
+                        updateUserInfo(currentUser); // Mettre à jour les informations de l'utilisateur
+                        fetchHistory(); // Charger l'historique
+                        showModal('success', 'Connexion réussie !');
+                    } else {
+                        showModal('error', 'Numéro ou mot de passe incorrect.');
+                    }
+                })
+                .catch(() => showModal('error', 'Erreur lors de la connexion.'));
+        } else {
+            showModal('error', 'Veuillez remplir tous les champs.');
+        }
+    }
+
+    // Mettre à jour le solde affiché
+    function updateBalance() {
+        document.getElementById('balanceAmount').textContent = `${currentUser.balance.toFixed(2)} XOF`;
+    }
+
+    function updateUserInfo(user) {
+        document.getElementById('account-name').textContent = user.name; // Afficher le nom
+        document.getElementById('account-phone').textContent = user.phone; // Afficher le numéro de téléphone
+        document.getElementById('balanceAmount').textContent = `${user.balance.toFixed(2)} XOF`; // Afficher le solde
+    }
+
+    // Charger l'historique des opérations
+    function fetchHistory() {
+        fetch(apiUrl + `?action=getHistory&phone=${currentUser.phone}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    operationsHistory = data.history;
+                    showHistoryModal(); // Afficher l'historique après le chargement
+                }
+            })
+            .catch(() => showModal('error', 'Erreur lors du chargement de l\'historique.'));
+    }
+
+    // Gestion des champs dynamiques
+    document.getElementById('operationType').addEventListener('change', function() {
+        const operationType = this.value;
+        const dynamicFields = document.getElementById('dynamicFields');
+        const feesInfo = document.getElementById('feesInfo');
+        let fieldsHTML = '';
+
+        if (operationType === 'depot') {
+            fieldsHTML = `
+                <label for="amount">Montant (XOF):</label>
+                <input type="number" id="amount" name="amount" required min="1000" max="1000000">
+            `;
+            feesInfo.classList.add('hidden');
+        } else if (operationType === 'transfert-national') {
+            fieldsHTML = `
+                <label for="recipientPhone">Numéro du bénéficiaire:</label>
+                <input type="tel" id="recipientPhone" name="recipientPhone" required minlength="8">
+
+                <label for="amount">Montant (XOF):</label>
+                <input type="number" id="amount" name="amount" required min="500" max="500000">
+            `;
+            feesInfo.textContent = "Frais de transfert : 0%";
+            feesInfo.classList.remove('hidden');
+        } else if (operationType === 'transfert-international') {
+            fieldsHTML = `
+                <label for="recipientPhone">Numéro du bénéficiaire:</label>
+                <input type="tel" id="recipientPhone" name="recipientPhone" required minlength="8">
+
+                <label for="amount">Montant (XOF):</label>
+                <input type="number" id="amount" name="amount" required min="500" max="500000">
+
+                <label for="country">Pays de destination:</label>
+                <select id="country" name="country" required>
+                    <option value="France">France</option>
+                    <option value="États-Unis">États-Unis</option>
+                    <option value="Royaume-Uni">Royaume-Uni</option>
+                    <option value="Burkina Faso">Burkina Faso</option>
+                    <option value="Sénégal">Sénégal</option>
+                </select>
+            `;
+            feesInfo.textContent = "Frais de transfert : 2% (hors XOF)";
+            feesInfo.classList.remove('hidden');
+        } else if (operationType === 'retrait') {
+            fieldsHTML = `
+                <label for="service">Service de retrait:</label>
+                <select id="service" name="service" required>
+                    <option value="Orange Money">Orange Money</option>
+                    <option value="Moov Money">Moov Money</option>
+                    <option value="Wave">Wave</option>
+                    <option value="Sank">Sank</option>
+                    <option value="MTN">MTN</option>
+                    <option value="Flooz">Flooz</option>
+                </select>
+
+                <label for="country">Pays de destination:</label>
+                <select id="country" name="country" required>
+                    <option value="France">France</option>
+                    <option value="États-Unis">États-Unis</option>
+                    <option value="Royaume-Uni">Royaume-Uni</option>
+                    <option value="Burkina Faso">Burkina Faso</option>
+                    <option value="Sénégal">Sénégal</option>
+                </select>
+
+                <label for="amount">Montant (XOF):</label>
+                <input type="number" id="amount" name="amount" required min="1000" max="1000000">
+
+                <label for="recipientPhone">Numéro de téléphone:</label>
+                <input type="tel" id="recipientPhone" name="recipientPhone" required minlength="8">
+            `;
+            feesInfo.textContent = "Frais de retrait : 2% (hors XOF)";
+            feesInfo.classList.remove('hidden');
+        } else if (operationType === 'internet') {
+            fieldsHTML = `
+                <label for="recipientPhone">Numéro du destinataire:</label>
+                <input type="tel" id="recipientPhone" name="recipientPhone" required minlength="8">
+
+                <label for="package">Forfait:</label>
+                <select id="package" name="package">
+                    <option value="1GB">1GB - 1000 XOF</option>
+                    <option value="3GB">3GB - 3000 XOF</option>
+                    <option value="5GB">5GB - 5000 XOF</option>
+                </select>
+            `;
+            feesInfo.classList.add('hidden');
+        } else if (operationType === 'credit') {
+            fieldsHTML = `
+                <label for="recipientPhone">Numéro du destinataire:</label>
+                <input type="tel" id="recipientPhone" name="recipientPhone" required minlength="8">
+
+                <label for="amount">Montant (XOF):</label>
+                <input type="number" id="amount" name="amount" required min="500" max="500000">
+            `;
+            feesInfo.classList.add('hidden');
+        }
+
+        dynamicFields.innerHTML = fieldsHTML;
+    });
+
+    // Soumission du formulaire d'opération
+    document.getElementById('operationForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const operationType = document.getElementById('operationType').value;
+        const amount = parseFloat(document.getElementById('amount').value);
+        const recipientPhone = document.getElementById('recipientPhone') ? document.getElementById('recipientPhone').value : null;
+        const country = document.getElementById('country') ? document.getElementById('country').value : null;
+        const service = document.getElementById('service') ? document.getElementById('service').value : null;
+
+        // Validation des champs
+        if (!amount || (operationType.includes('transfert') && !recipientPhone)) {
+            showModal('error', 'Veuillez remplir tous les champs requis.');
+            return;
+        }
+
+        // Stocker l'opération en attente
+        pendingOperation = { operationType, amount, recipientPhone, country, service };
+
+        // Afficher la modal de code PIN
+        showPinModal();
+    });
+
+    // Fonctions pour afficher les sections
+    function showLoginForm() {
+        document.getElementById('login-section').classList.remove('hidden');
+        document.getElementById('signup-section').classList.add('hidden');
+        document.getElementById('account-section').classList.add('hidden');
+        document.getElementById('identification-section').classList.add('hidden');
+    }
+
+    function showSignupForm() {
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('signup-section').classList.remove('hidden');
+        document.getElementById('account-section').classList.add('hidden');
+        document.getElementById('identification-section').classList.add('hidden');
+    }
+
+    function showAccountSection() {
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('signup-section').classList.add('hidden');
+        document.getElementById('account-section').classList.remove('hidden');
+        document.getElementById('identification-section').classList.add('hidden');
+    }
+
+    function showIdentificationForm() {
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('signup-section').classList.add('hidden');
+        document.getElementById('account-section').classList.add('hidden');
+        document.getElementById('identification-section').classList.remove('hidden');
+    }
+
+    // Fonction d'inscription simulée
+    function signupUser() {
+        const firstName = document.getElementById('signup-firstName').value;
+        const lastName = document.getElementById('signup-lastName').value;
+        const phone = document.getElementById('signup-phone').value;
+        const country = document.getElementById('signup-country').value;
+        const secretCode = document.getElementById('signup-secretCode').value;
+
+        if (firstName && lastName && phone && country && secretCode) {
+            // Simuler l'envoi des données pour inscription
+            showModal('success', 'Inscription réussie !');
+            showLoginForm();
+        } else {
+            showModal('error', 'Veuillez remplir tous les champs.');
+        }
+    }
+
+    // Fonction de déconnexion
+    function logoutUser() {
+        currentUser = null;
+        showLoginForm();
+    }
+
+    // Fonction de soumission d'identification
+    function submitIdentification() {
+        const firstName = document.getElementById('identification-firstName').value;
+        const lastName = document.getElementById('identification-lastName').value;
+        const phone = document.getElementById('identification-phone').value;
+        const idFront = document.getElementById('id-front').files[0];
+        const idBack = document.getElementById('id-back').files[0];
+        const secretCode = document.getElementById('identification-secretCode').value;
+
+        if (firstName && lastName && phone && idFront && idBack && secretCode) {
+            // Simuler l'envoi des données pour identification
+            showModal('success', 'Identification soumise avec succès !');
+            showAccountSection();
+        } else {
+            showModal('error', 'Veuillez remplir tous les champs.');
+        }
+    }
+</script>
+
+</body>
+</html>
